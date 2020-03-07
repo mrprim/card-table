@@ -1,0 +1,47 @@
+$cardSize: 80px;
+
+.card {
+  position: relative;
+  display: inline-block;
+  // margin-left: -($cardSize * 5/6);
+  margin: 2px;
+  img {
+    width: $cardSize;
+  }
+
+  .discardButton {
+    position: absolute;
+    right: -2px;
+    top: -2px;
+    text-align: center;
+    line-height: 20px;
+    background-color: white;
+    border: solid 2px black;
+    border-radius: 50px;
+    height: 20px;
+    width: 20px;
+    display: block;
+
+    &:hover {
+      cursor: pointer;
+      background-color: black;
+      border: solid 2px white;
+      color: white;
+    }
+
+    &:active {
+      cursor: pointer;
+      background-color: grey;
+      border: solid 2px white;
+      color: white;
+    }
+  }
+
+  &:first-of-type {
+    margin-left: 0px;
+  }
+
+  &:hover {
+    z-index: 99;
+  }
+}

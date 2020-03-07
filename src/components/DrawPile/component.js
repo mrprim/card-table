@@ -2,9 +2,13 @@ import React from 'react'
 import './index.scss'
 
 const DrawPile = ({ count, drawClick }) =>
-  <div>
-    Draw Pile: {count}
-    { count ? <button onClick={drawClick}>Draw</button> : null }
+  <div className='drawPile'>
+    <div className='title'>Draw [{count}]</div>
+    {
+      count
+      ? <img className='card' onClick={drawClick} src='./cardBack.png' alt='draw pile'/>
+      : <img className='card' src='./noCard.png' alt='discard pile'/>
+    }
   </div>
 
 export default DrawPile

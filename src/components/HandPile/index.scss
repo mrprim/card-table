@@ -1,0 +1,21 @@
+.hand {
+  text-align: center;
+  border-radius: 10px;
+  border: solid 2px black;
+  margin: 5px;
+
+  .cards {
+    padding: 50px;
+  }
+
+  .title {
+    background-color: black;
+    color: white;
+    border-radius: 20px;
+    border: solid 5px white;
+    width: 100px;
+    margin: -24px auto 0 auto;
+    padding: 10px;
+    font-weight: bolder;
+  }
+}
