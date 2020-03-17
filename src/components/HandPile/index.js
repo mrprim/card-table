@@ -1,39 +1,22 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import './index.scss'
-import Component from './component'
+import { useSelector } from 'react-redux'
 import getPileCards from '../../selectors/getPileCards'
 import * as piles from '../../constants/piles'
-import { useDrop } from 'react-dnd'
+import Pile from '../Pile'
+import Card from '../Card'
+import './index.scss'
+import useDropCard from '../../hooks/useDropCard'
 import * as dragTypes from '../../constants/dragTypes'
-import draw from '../../async/draw'
-import { setGame } from '../../actions'
-import getGameState from '../../async/getGameState'
 
-const HandPile = () => {
-  const dispatch = useDispatch()
-  const deckId = useSelector(s => s.game.deckId)
-  const cards = useSelector(getPileCards(piles.HAND))
-  const [{ isOver }, dropRef] = useDrop({
-    accept: dragTypes.DRAW,
-    drop: () => drawCard(),
-    collect: monitor => ({
-      isOver: !!monitor.isOver()
-    })
-  })
+const HandPile = ({ cards, dropRef, isOver }) =>
+  <Pile className='hand' dropRef={dropRef} isOver={isOver} title={`Drawn [${cards.length}]`}>
+    {cards.map(c => <Card key={c.code} {...c} pile={piles.HAND} />)}
+  </Pile>
 
-  const drawCard = async () => {
-    await draw(deckId)
-    const game = await getGameState(deckId)
+export default () => {
+  const pile = piles.HAND
+  const cards = useSelector(getPileCards(pile))
+  const { dropRef, isOver } = useDropCard({ accept: dragTypes.DRAW, pile })
 
-    dispatch(setGame(game))
-  }
-
-  return (
-    <Component
-      dropRef={dropRef}
-      cards={cards}
-    />
-  )
+  return <HandPile isOver={isOver} dropRef={dropRef} cards={cards} />
 }
-export default HandPile

@@ -15,7 +15,7 @@ const DiscardPile = () => {
   const deckId = useSelector(s => s.game.deckId)
   const count = useSelector(getPileCount(piles.DRAW))
 
-  const [{ opacity }, dragRef] = useDrag({
+  const [, dragRef] = useDrag({
     item: { type: dragTypes.DRAW },
     collect: monitor => ({
       opacity: monitor.isDragging() ? 0.5 : 1

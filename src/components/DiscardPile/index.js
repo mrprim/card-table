@@ -1,49 +1,36 @@
-import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import React, { useCallback } from 'react'
+import { useSelector } from 'react-redux'
 import './index.scss'
-import Component from './component'
-import { setGame } from '../../actions'
 import getPileCount from '../../selectors/getPileCount'
 import * as piles from '../../constants/piles'
-import getGameState from '../../async/getGameState'
 import addPileToPile from '../../async/addPileToPile'
 import shufflePile from '../../async/shufflePile'
-import { useDrop } from 'react-dnd'
+import useDropCard from '../../hooks/useDropCard'
+import useRefreshGame from '../../hooks/useRefreshGame'
 import * as dragTypes from '../../constants/dragTypes'
-import addCardsToPile from '../../async/addCardsToPile'
+import Pile from '../Pile'
 
-const DiscardPile = () => {
-  const dispatch = useDispatch()
+const DiscardPile = ({ count, reshuffleClick, dropRef, isOver }) =>
+  <Pile className='discard' dropRef={dropRef} title={`Discard [${count}]`} isOver={isOver}>
+    {
+      count
+        ? <img className='card' onClick={reshuffleClick} src='./cardBack.png' alt='discard pile' />
+        : <img className='card' src='./noCard.png' alt='discard pile' />
+    }
+  </Pile>
+
+export default () => {
+  const pile = piles.DISCARD
+  const refresh = useRefreshGame()
   const deckId = useSelector(s => s.game.deckId)
-  const count = useSelector(getPileCount(piles.DISCARD))
-  const [{ isOver }, dropRef] = useDrop({
-    accept: dragTypes.CARD,
-    drop: ({ code }) => discardCard(code),
-    collect: monitor => ({
-      isOver: !!monitor.isOver()
-    })
-  })
+  const count = useSelector(getPileCount(pile))
+  const { dropRef, isOver } = useDropCard({ accept: dragTypes.CARD, pile })
 
-  const discardCard = async code => {
-    await addCardsToPile(deckId, piles.DISCARD, code)
-    const game = await getGameState(deckId)
-    dispatch(setGame(game))
-  }
-
-  const reshuffleClick = async () => {
+  const reshuffleClick = useCallback(async () => {
     await addPileToPile(deckId, piles.DISCARD, piles.DRAW)
     await shufflePile(deckId, piles.DRAW)
-    const game = await getGameState(deckId)
+    await refresh()
+  }, [refresh, deckId])
 
-    dispatch(setGame(game))
-  }
-
-  return (
-    <Component
-      dropRef={dropRef}
-      count={count}
-      reshuffleClick={reshuffleClick}
-    />
-  )
+  return <DiscardPile dropRef={dropRef} count={count} isOver={isOver} reshuffleClick={reshuffleClick} />
 }
-export default DiscardPile
