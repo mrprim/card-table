@@ -1,40 +1,40 @@
-import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import React, { useCallback } from 'react'
+import { useSelector } from 'react-redux'
 import './index.scss'
-import Component from './component'
 import draw from '../../async/draw'
-import { setGame } from '../../actions'
 import getPileCount from '../../selectors/getPileCount'
 import * as piles from '../../constants/piles'
-import getGameState from '../../async/getGameState'
 import { useDrag } from 'react-dnd'
 import * as dragTypes from '../../constants/dragTypes'
+import Pile from '../Pile'
+import useRefreshGame from '../../hooks/useRefreshGame'
+
+const DrawPile = ({ count, dragRef, drawClick }) =>
+  <Pile className='draw' title={`Draw [${count}]`}>
+    {
+      count
+        ? <img className='card' ref={dragRef} onClick={drawClick} src='./cardBack.png' alt='draw pile' />
+        : <img className='card' src='./noCard.png' alt='discard pile' />
+    }
+  </Pile>
 
 const DiscardPile = () => {
-  const dispatch = useDispatch()
+  const refresh = useRefreshGame()
   const deckId = useSelector(s => s.game.deckId)
   const count = useSelector(getPileCount(piles.DRAW))
 
   const [, dragRef] = useDrag({
     item: { type: dragTypes.DRAW },
     collect: monitor => ({
-      opacity: monitor.isDragging() ? 0.5 : 1
+      opacity: !!monitor.isDragging()
     })
   })
 
-  const drawClick = async () => {
+  const drawClick = useCallback(async () => {
     await draw(deckId)
-    const game = await getGameState(deckId)
+    refresh()
+  }, [refresh, deckId])
 
-    dispatch(setGame(game))
-  }
-
-  return (
-    <Component
-      count={count}
-      drawClick={drawClick}
-      dragRef={dragRef}
-    />
-  )
+  return <DrawPile count={count} drawClick={drawClick} dragRef={dragRef} />
 }
 export default DiscardPile

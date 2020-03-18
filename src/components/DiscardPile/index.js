@@ -24,7 +24,7 @@ export default () => {
   const refresh = useRefreshGame()
   const deckId = useSelector(s => s.game.deckId)
   const count = useSelector(getPileCount(pile))
-  const { dropRef, isOver } = useDropCard({ accept: dragTypes.CARD, pile })
+  const { dropRef, isOver } = useDropCard({ accept: [dragTypes.CARD, dragTypes.DRAW], pile })
 
   const reshuffleClick = useCallback(async () => {
     await addPileToPile(deckId, piles.DISCARD, piles.DRAW)

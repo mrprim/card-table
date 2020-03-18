@@ -18,19 +18,19 @@ export default ({ pile, accept }) => {
     })
   })
 
-  const drawCard = useCallback(async () => {
-    await draw(deckId)
+  const drawCard = useCallback(async sourcePile => {
+    await draw(deckId, sourcePile, pile)
     await refresh()
-  }, [deckId, refresh])
+  }, [deckId, pile, refresh])
 
   const moveCard = useCallback(async code => {
     await addCardsToPile(deckId, pile, code)
     await refresh()
   }, [deckId, refresh, pile])
 
-  const handleCard = useCallback(({ type, code }) => {
+  const handleCard = useCallback(({ type, code, sourcePile }) => {
     switch (type) {
-      case dragTypes.DRAW: return drawCard()
+      case dragTypes.DRAW: return drawCard(sourcePile)
       case dragTypes.CARD: return moveCard(code)
       default: console.log(`${type} drop handling not implemented`)
     }
