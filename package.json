@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "hookrouter": "^1.2.3",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "react": "^16.9.0",
     "react-dnd": "^10.0.2",
     "react-dnd-html5-backend": "^10.0.2",
